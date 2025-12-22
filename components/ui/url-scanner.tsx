@@ -52,10 +52,10 @@ export default function UrlScanner({ onScan, isScanning = false }: UrlScannerPro
           }}
           className="inline-block mb-4"
         >
-          <Sparkles className="w-16 h-16 text-apex-cyan" strokeWidth={1.5} />
+          <Sparkles className="w-16 h-16 text-apex-primary" strokeWidth={1.5} />
         </motion.div>
 
-        <h1 className="text-5xl font-bold mb-4 text-gradient-cyan">
+        <h1 className="text-5xl font-bold mb-4 text-gradient-premium">
           Apex Intelligence
         </h1>
         <p className="text-xl text-white/60">
@@ -72,11 +72,11 @@ export default function UrlScanner({ onScan, isScanning = false }: UrlScannerPro
       >
         <div
           className={`glass-panel p-2 transition-all duration-300 ${
-            isFocused ? 'cyber-glow border-apex-cyan/50' : ''
+            isFocused ? 'cyber-glow border-apex-primary/50' : ''
           }`}
         >
           <div className="flex items-center gap-3">
-            <Search className="w-6 h-6 text-apex-cyan/70 ml-2" />
+            <Search className="w-6 h-6 text-apex-primary/70 ml-2" />
 
             <input
               type="text"
@@ -96,13 +96,13 @@ export default function UrlScanner({ onScan, isScanning = false }: UrlScannerPro
               whileTap={{ scale: 0.95 }}
               className={`
                 px-8 py-3 rounded-lg font-semibold
-                bg-gradient-to-r from-apex-cyan to-blue-500
-                hover:from-apex-cyan/90 hover:to-blue-500/90
+                bg-gradient-to-r from-apex-primary to-apex-accent
+                hover:from-apex-primary/90 hover:to-apex-accent/90
                 disabled:from-gray-600 disabled:to-gray-700
                 disabled:cursor-not-allowed
                 transition-all duration-300
                 flex items-center gap-2
-                shadow-[0_0_20px_rgba(0,240,255,0.3)]
+                shadow-[0_0_20px_rgba(99,102,241,0.3)]
               `}
             >
               {isScanning ? (
@@ -151,7 +151,7 @@ export default function UrlScanner({ onScan, isScanning = false }: UrlScannerPro
           <span>AI-Powered Insights</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-apex-cyan rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-apex-accent rounded-full animate-pulse" />
           <span>30-Second Reports</span>
         </div>
       </motion.div>
