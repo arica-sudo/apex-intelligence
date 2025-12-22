@@ -108,10 +108,10 @@ function ConnectionLine({
 
 function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
   const defaultCompetitors: CompetitorData[] = competitors || [
-    { name: 'Competitor A', marketShare: 35, gap: 45, color: '#ff0055' },
-    { name: 'Competitor B', marketShare: 25, gap: 30, color: '#9d00ff' },
-    { name: 'Competitor C', marketShare: 20, gap: 20, color: '#00f0ff' },
-    { name: 'Competitor D', marketShare: 15, gap: 10, color: '#00ff94' },
+    { name: 'Competitor A', marketShare: 35, gap: 45, color: '#EF4444' },
+    { name: 'Competitor B', marketShare: 25, gap: 30, color: '#F59E0B' },
+    { name: 'Competitor C', marketShare: 20, gap: 20, color: '#10B981' },
+    { name: 'Competitor D', marketShare: 15, gap: 10, color: '#3B82F6' },
   ];
 
   const centerPosition: [number, number, number] = [0, 0, 0];
@@ -126,7 +126,7 @@ function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
       <CompetitorSphere
         position={centerPosition}
         size={1.5}
-        color="#00f0ff"
+        color="#6366F1"
         label={yourDomain}
       />
 
@@ -189,15 +189,15 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
 
       <div className="mt-4 flex items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-apex-cyan rounded-full" />
+          <div className="w-3 h-3 bg-apex-primary rounded-full" />
           <span className="text-white/60">Your Site</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-apex-crimson rounded-full" />
+          <div className="w-3 h-3 bg-apex-danger rounded-full" />
           <span className="text-white/60">Strong Competitor</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-apex-emerald rounded-full" />
+          <div className="w-3 h-3 bg-apex-success rounded-full" />
           <span className="text-white/60">Weak Competitor</span>
         </div>
       </div>

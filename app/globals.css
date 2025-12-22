@@ -3,13 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0e27;
+  --background: #0B0D17;
   --foreground: #ffffff;
+  --gradient-start: #6366F1;
+  --gradient-end: #8B5CF6;
 }
 
 @layer base {
   body {
-    background-color: #0a0e27;
+    background: linear-gradient(135deg, #0B0D17 0%, #060812 100%);
     color: var(--foreground);
     margin: 0;
     padding: 0;
@@ -43,14 +45,21 @@
   }
 
   .text-gradient-cyan {
-    background: linear-gradient(to right, #00f0ff, #60a5fa);
+    background: linear-gradient(135deg, #6366F1, #3B82F6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-violet {
-    background: linear-gradient(to right, #9d00ff, #c084fc);
+    background: linear-gradient(135deg, #8B5CF6, #6366F1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-premium {
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -60,8 +69,8 @@
 /* Animated mesh background */
 .mesh-background {
   background-image:
-    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: mesh-move 20s linear infinite;
 }

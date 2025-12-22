@@ -13,9 +13,9 @@ function ParticleField() {
     const colors = new Float32Array(particleCount * 3);
 
     const colorPalette = [
-      new THREE.Color('#00f0ff'), // cyan
-      new THREE.Color('#9d00ff'), // violet
-      new THREE.Color('#00ff94'), // emerald
+      new THREE.Color('#6366F1'), // indigo
+      new THREE.Color('#8B5CF6'), // purple
+      new THREE.Color('#3B82F6'), // blue
     ];
 
     for (let i = 0; i < particleCount; i++) {

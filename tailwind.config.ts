@@ -11,12 +11,19 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        // Apex Intelligence Color Palette
-        'apex-dark': '#0a0e27',
-        'apex-cyan': '#00f0ff',
-        'apex-violet': '#9d00ff',
-        'apex-emerald': '#00ff94',
-        'apex-crimson': '#ff0055',
+        // Premium SaaS Color Palette (Wiz.io inspired)
+        'apex-dark': '#0B0D17',
+        'apex-darker': '#060812',
+        'apex-primary': '#6366F1', // Indigo
+        'apex-secondary': '#8B5CF6', // Purple
+        'apex-accent': '#3B82F6', // Blue
+        'apex-success': '#10B981', // Emerald
+        'apex-warning': '#F59E0B', // Amber
+        'apex-danger': '#EF4444', // Red
+        'apex-cyan': '#06B6D4', // Cyan (toned down)
+        'apex-violet': '#8B5CF6', // Purple
+        'apex-emerald': '#10B981', // Emerald
+        'apex-crimson': '#EF4444', // Red
       },
       backdropBlur: {
         xs: '2px',
