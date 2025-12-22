@@ -11,7 +11,14 @@
       "Bash(ls:*)",
       "Bash(git init:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(python:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }
