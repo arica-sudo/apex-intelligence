@@ -1,10 +1,19 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, Sphere } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
+
+function LoadingFallback() {
+  return (
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="#6366F1" wireframe />
+    </mesh>
+  );
+}
 
 interface CompetitorData {
   name: string;
@@ -181,9 +190,15 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
         </p>
       </div>
 
-      <div className="h-[500px] rounded-lg overflow-hidden bg-black/20">
-        <Canvas camera={{ position: [0, 3, 10], fov: 50 }}>
-          <Scene yourDomain={yourDomain} competitors={competitors} />
+      <div className="h-[500px] rounded-lg overflow-hidden bg-black/20 relative">
+        <Canvas
+          camera={{ position: [0, 3, 10], fov: 50 }}
+          gl={{ antialias: true, alpha: true }}
+          dpr={[1, 2]}
+        >
+          <Suspense fallback={<LoadingFallback />}>
+            <Scene yourDomain={yourDomain} competitors={competitors} />
+          </Suspense>
         </Canvas>
       </div>
 

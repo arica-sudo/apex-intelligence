@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateMockBacklinks, generateMockKeywords, generateMockTraffic } from '@/lib/mock-data';
+import { fetchRealSEOData } from '@/lib/real-api-integrations';
 
 // Google PageSpeed Insights API (Free tier)
 const PSI_API_KEY = process.env.NEXT_PUBLIC_PSI_API_KEY || '';
@@ -192,10 +193,34 @@ export async function POST(request: NextRequest) {
 
     const domain = new URL(url).hostname;
 
-    // Generate Phase 2 mock data
-    const backlinks = generateMockBacklinks(domain);
-    const keywords = generateMockKeywords(domain);
-    const traffic = generateMockTraffic(domain);
+    // Try to fetch real SEO data from free APIs
+    let backlinks, keywords, traffic;
+    const realData = await fetchRealSEOData(domain);
+
+    if (realData && realData.domainMetrics) {
+      // Use real data when available
+      console.log('✅ Using REAL API data from OpenPageRank');
+
+      backlinks = {
+        ...generateMockBacklinks(domain),
+        totalBacklinks: realData.backlinks.totalBacklinks,
+        referringDomains: realData.backlinks.referringDomains,
+        domainRating: realData.domainMetrics.authority,
+      };
+
+      keywords = generateMockKeywords(domain);
+
+      traffic = {
+        ...generateMockTraffic(domain),
+        monthlyVisits: realData.monthlyTraffic,
+      };
+    } else {
+      // Fallback to mock data
+      console.log('⚠️  Falling back to MOCK data (API keys not configured or rate limited)');
+      backlinks = generateMockBacklinks(domain);
+      keywords = generateMockKeywords(domain);
+      traffic = generateMockTraffic(domain);
+    }
 
     // Known high-authority domains should have excellent scores
     const KNOWN_DOMAINS: Record<string, { performance: number, seoScore: number }> = {
