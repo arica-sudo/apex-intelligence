@@ -43,6 +43,18 @@ export default function TrafficAnalysis({ data }: TrafficAnalysisProps) {
     return `${minutes}m ${secs}s`;
   };
 
+  const formatTraffic = (visits: number) => {
+    if (visits >= 1000000000) {
+      return `${(visits / 1000000000).toFixed(2)}B`;
+    } else if (visits >= 1000000) {
+      return `${(visits / 1000000).toFixed(2)}M`;
+    } else if (visits >= 1000) {
+      return `${(visits / 1000).toFixed(1)}K`;
+    } else {
+      return visits.toString();
+    }
+  };
+
   return (
     <motion.div
       variants={item}
@@ -81,7 +93,7 @@ export default function TrafficAnalysis({ data }: TrafficAnalysisProps) {
             transition={{ delay: 0.2 }}
             className="text-2xl font-bold text-apex-cyan"
           >
-            {(data.monthlyVisits / 1000000).toFixed(1)}M
+            {formatTraffic(data.monthlyVisits)}
           </motion.p>
         </div>
 
@@ -154,7 +166,7 @@ export default function TrafficAnalysis({ data }: TrafficAnalysisProps) {
               <YAxis
                 stroke="#fff"
                 tick={{ fill: 'rgba(255,255,255,0.6)' }}
-                tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+                tickFormatter={(value) => formatTraffic(value)}
               />
               <Tooltip
                 contentStyle={{
@@ -163,7 +175,7 @@ export default function TrafficAnalysis({ data }: TrafficAnalysisProps) {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value: any) => [`${(value / 1000000).toFixed(2)}M visits`, 'Traffic']}
+                formatter={(value: any) => [`${formatTraffic(value)} visits`, 'Traffic']}
               />
               <Area
                 type="monotone"
