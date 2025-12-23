@@ -11,19 +11,31 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        // Premium SaaS Color Palette (Wiz.io inspired)
-        'apex-dark': '#0B0D17',
+
+        // Dark Mode Colors - Modern Enterprise
+        'apex-dark': '#0B0E14', // Deep Charcoal
         'apex-darker': '#060812',
-        'apex-primary': '#6366F1', // Indigo
+
+        // Light Mode Colors - Modern Enterprise
+        'apex-light': '#F8FAFC', // Soft Slate
+        'apex-lighter': '#FFFFFF',
+
+        // Accent Colors (Theme-aware)
+        'apex-primary': '#6366F1', // Electric Indigo (Dark)
+        'apex-primary-light': '#2563EB', // Cobalt Blue (Light)
         'apex-secondary': '#8B5CF6', // Purple
         'apex-accent': '#3B82F6', // Blue
+
+        // Status Colors
         'apex-success': '#10B981', // Emerald
         'apex-warning': '#F59E0B', // Amber
         'apex-danger': '#EF4444', // Red
-        'apex-cyan': '#06B6D4', // Cyan (toned down)
-        'apex-violet': '#8B5CF6', // Purple
-        'apex-emerald': '#10B981', // Emerald
-        'apex-crimson': '#EF4444', // Red
+
+        // Legacy Colors
+        'apex-cyan': '#06B6D4',
+        'apex-violet': '#8B5CF6',
+        'apex-emerald': '#10B981',
+        'apex-crimson': '#EF4444',
       },
       backdropBlur: {
         xs: '2px',

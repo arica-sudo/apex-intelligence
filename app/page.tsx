@@ -8,6 +8,9 @@ import ResultCards from '@/components/ui/result-cards';
 import BacklinkAnalysis from '@/components/ui/backlink-analysis';
 import KeywordAnalysis from '@/components/ui/keyword-analysis';
 import TrafficAnalysis from '@/components/ui/traffic-analysis';
+import ThemeToggle from '@/components/ui/theme-toggle';
+import HapticButton from '@/components/ui/haptic-button';
+import { SkeletonDashboard } from '@/components/ui/skeleton';
 import { ScanResult } from '@/lib/types';
 import { motion } from 'framer-motion';
 
@@ -54,16 +57,21 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen relative overflow-hidden">
+    <main className="min-h-screen relative overflow-hidden bg-gradient-to-br from-apex-light to-apex-lighter dark:from-apex-dark dark:to-apex-darker transition-all duration-300">
       {/* WebGL Particle Background */}
       {scanResult && <ParticleBackground />}
 
+      {/* Theme Toggle - Fixed top right */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* Animated mesh background */}
-      <div className="fixed inset-0 mesh-background opacity-30" />
+      <div className="fixed inset-0 mesh-background opacity-30 dark:opacity-30 opacity-10" />
 
       {/* Gradient orbs */}
-      <div className="fixed top-20 -left-40 w-96 h-96 bg-apex-cyan/10 rounded-full blur-[100px]" />
-      <div className="fixed bottom-20 -right-40 w-96 h-96 bg-apex-violet/10 rounded-full blur-[100px]" />
+      <div className="fixed top-20 -left-40 w-96 h-96 bg-apex-primary/10 rounded-full blur-[100px]" />
+      <div className="fixed bottom-20 -right-40 w-96 h-96 bg-apex-accent/10 rounded-full blur-[100px]" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-6 py-16">
@@ -74,8 +82,11 @@ export default function Home() {
         )}
 
         {isScanning && (
-          <div className="min-h-screen flex items-center justify-center">
+          <div className="min-h-screen flex flex-col items-center justify-center px-6">
             <ScanningAnimation />
+            <div className="w-full max-w-6xl mt-12">
+              <SkeletonDashboard />
+            </div>
           </div>
         )}
 
@@ -86,9 +97,9 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               className="glass-panel p-8 max-w-2xl text-center"
             >
-              <div className="w-16 h-16 bg-apex-crimson/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-apex-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg
-                  className="w-8 h-8 text-apex-crimson"
+                  className="w-8 h-8 text-apex-danger"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -101,14 +112,11 @@ export default function Home() {
                   />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-apex-crimson mb-3">Scan Failed</h2>
-              <p className="text-white/70 mb-6">{error}</p>
-              <button
-                onClick={handleNewScan}
-                className="px-6 py-3 bg-gradient-to-r from-apex-cyan to-blue-500 rounded-lg font-semibold hover:from-apex-cyan/90 hover:to-blue-500/90 transition-all"
-              >
+              <h2 className="text-2xl font-bold text-apex-danger mb-3">Scan Failed</h2>
+              <p className="text-foreground/70 mb-6">{error}</p>
+              <HapticButton onClick={handleNewScan}>
                 Try Again
-              </button>
+              </HapticButton>
             </motion.div>
           </div>
         )}
@@ -119,18 +127,13 @@ export default function Home() {
               <motion.h1
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="text-3xl font-bold text-gradient-cyan"
+                className="text-3xl font-bold text-gradient-premium"
               >
                 Intelligence Report
               </motion.h1>
-              <motion.button
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                onClick={handleNewScan}
-                className="px-6 py-3 glass-panel-hover font-semibold transition-all"
-              >
+              <HapticButton onClick={handleNewScan} variant="secondary">
                 New Scan
-              </motion.button>
+              </HapticButton>
             </div>
 
             {/* Phase 1 Results */}
@@ -166,8 +169,8 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 text-center py-8 text-white/40 text-sm">
-        <p>Apex Intelligence v0.2 | Phase 2 Complete</p>
+      <footer className="relative z-10 text-center py-8 text-foreground/40 text-sm">
+        <p>Apex Intelligence v0.3 | Phase 3: Modern Enterprise UI</p>
       </footer>
     </main>
   );

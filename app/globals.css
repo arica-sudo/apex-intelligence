@@ -3,18 +3,46 @@
 @tailwind utilities;
 
 :root {
-  --background: #0B0D17;
+  /* Light Mode - Modern Enterprise */
+  --background: #F8FAFC;
+  --foreground: #0B0E14;
+  --card-bg: #FFFFFF;
+  --gradient-start: #2563EB;
+  --gradient-end: #3B82F6;
+  --primary: #2563EB;
+  --text-primary: #0B0E14;
+  --text-secondary: #64748B;
+  --border: #E2E8F0;
+}
+
+.dark {
+  /* Dark Mode - Modern Enterprise */
+  --background: #0B0E14;
   --foreground: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.05);
   --gradient-start: #6366F1;
   --gradient-end: #8B5CF6;
+  --primary: #6366F1;
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --border: rgba(255, 255, 255, 0.1);
 }
 
 @layer base {
   body {
-    background: linear-gradient(135deg, #0B0D17 0%, #060812 100%);
+    background: var(--background);
     color: var(--foreground);
     margin: 0;
     padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background: linear-gradient(135deg, #0B0E14 0%, #060812 100%);
+  }
+
+  body:not(.dark) {
+    background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
   }
 }
 
