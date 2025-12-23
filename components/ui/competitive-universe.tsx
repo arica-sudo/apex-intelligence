@@ -5,6 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, Sphere } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
+import { CompetitorData as APICompetitorData } from '@/lib/types';
 
 function LoadingFallback() {
   return (
@@ -24,33 +25,25 @@ interface CompetitorData {
 
 interface CompetitiveUniverseProps {
   yourDomain: string;
-  competitors?: CompetitorData[];
+  competitors?: APICompetitorData[];
 }
 
-function CompetitorSphere({
-  position,
-  size,
-  color,
-  label,
-  onClick
-}: {
+interface CompetitorSphereProps {
   position: [number, number, number];
   size: number;
   color: string;
   label: string;
-  onClick?: () => void;
-}) {
+}
+
+function CompetitorSphere({ position, size, color, label }: CompetitorSphereProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.002;
-      if (hovered) {
-        meshRef.current.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
-      } else {
-        meshRef.current.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
-      }
+      meshRef.current.rotation.y += 0.005;
+      const scale = hovered ? 1.2 : 1;
+      meshRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.1);
     }
   });
 
@@ -61,28 +54,15 @@ function CompetitorSphere({
         args={[size, 32, 32]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        onClick={onClick}
       >
         <meshStandardMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={hovered ? 0.5 : 0.2}
-          transparent
-          opacity={0.8}
+          emissiveIntensity={hovered ? 0.6 : 0.3}
+          roughness={0.3}
+          metalness={0.7}
         />
       </Sphere>
-
-      {/* Glow effect */}
-      <Sphere args={[size * 1.1, 32, 32]}>
-        <meshBasicMaterial
-          color={color}
-          transparent
-          opacity={hovered ? 0.2 : 0.1}
-          side={THREE.BackSide}
-        />
-      </Sphere>
-
-      {/* Label */}
       <Text
         position={[0, size + 0.5, 0]}
         fontSize={0.3}
@@ -96,11 +76,7 @@ function CompetitorSphere({
   );
 }
 
-function ConnectionLine({
-  start,
-  end,
-  color
-}: {
+function ConnectionLine({ start, end, color }: {
   start: [number, number, number];
   end: [number, number, number];
   color: string;
@@ -110,17 +86,32 @@ function ConnectionLine({
 
   return (
     <line geometry={lineGeometry}>
-      <lineBasicMaterial color={color} transparent opacity={0.3} />
+      <lineBasicMaterial color={color} opacity={0.3} transparent />
     </line>
   );
 }
 
-function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
-  const defaultCompetitors: CompetitorData[] = competitors || [
-    { name: 'Competitor A', marketShare: 35, gap: 45, color: '#EF4444' },
-    { name: 'Competitor B', marketShare: 25, gap: 30, color: '#F59E0B' },
-    { name: 'Competitor C', marketShare: 20, gap: 20, color: '#10B981' },
-    { name: 'Competitor D', marketShare: 15, gap: 10, color: '#3B82F6' },
+function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: APICompetitorData[] }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.001;
+    }
+  });
+
+  // Convert API competitors to internal format
+  const colors = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6'];
+  const competitorData: CompetitorData[] = competitors?.length ? competitors.map((comp, index) => ({
+    name: comp.title || comp.domain,
+    marketShare: 100 - comp.authority, // Higher authority = closer to center
+    gap: (100 - comp.authority) * 0.5, // Authority distance from center
+    color: colors[index % colors.length],
+  })) : [
+    { name: 'Industry Leader A', marketShare: 35, gap: 45, color: '#EF4444' },
+    { name: 'Industry Leader B', marketShare: 25, gap: 30, color: '#F59E0B' },
+    { name: 'Industry Leader C', marketShare: 20, gap: 20, color: '#10B981' },
+    { name: 'Industry Leader D', marketShare: 15, gap: 10, color: '#3B82F6' },
   ];
 
   const centerPosition: [number, number, number] = [0, 0, 0];
@@ -129,7 +120,7 @@ function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
     <>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} />
-      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00f0ff" />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} color="#6366F1" />
 
       {/* Your domain - center */}
       <CompetitorSphere
@@ -140,8 +131,8 @@ function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
       />
 
       {/* Competitor spheres orbiting */}
-      {defaultCompetitors.map((comp, index) => {
-        const angle = (index / defaultCompetitors.length) * Math.PI * 2;
+      {competitorData.map((comp, index) => {
+        const angle = (index / competitorData.length) * Math.PI * 2;
         const distance = 4 + comp.gap * 0.1;
         const x = Math.cos(angle) * distance;
         const z = Math.sin(angle) * distance;
@@ -179,12 +170,15 @@ function Scene({ yourDomain, competitors }: CompetitiveUniverseProps) {
 export default function CompetitiveUniverse({ yourDomain, competitors }: CompetitiveUniverseProps) {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
       className="glass-panel p-6"
     >
-      <div className="mb-4">
-        <h3 className="text-2xl font-semibold mb-2">Competitive Universe</h3>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gradient-premium mb-2">
+          Competitive Universe
+        </h2>
         <p className="text-white/60 text-sm">
           Interactive 3D visualization of your market position. Drag to rotate, scroll to zoom.
         </p>
@@ -205,17 +199,25 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
       <div className="mt-4 flex items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-apex-primary rounded-full" />
-          <span className="text-white/60">Your Site</span>
+          <span className="text-white/70">Your Domain</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-apex-danger rounded-full" />
-          <span className="text-white/60">Strong Competitor</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-apex-success rounded-full" />
-          <span className="text-white/60">Weak Competitor</span>
+          <div className="w-3 h-3 bg-red-500 rounded-full" />
+          <span className="text-white/70">Top Competitors</span>
         </div>
       </div>
+
+      {competitors && competitors.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          {competitors.map((comp) => (
+            <div key={comp.domain} className="glass-panel-hover p-3">
+              <p className="font-semibold text-white text-sm">{comp.title || comp.domain}</p>
+              <p className="text-xs text-white/50">{comp.domain}</p>
+              <p className="text-xs text-apex-accent mt-1">Authority: {comp.authority}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }

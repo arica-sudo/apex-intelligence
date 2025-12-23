@@ -89,6 +89,12 @@ export interface TrafficData {
   }>;
 }
 
+export interface CompetitorData {
+  domain: string;
+  title: string;
+  authority: number;
+}
+
 export interface ScanResult {
   url: string;
   domain: string;
@@ -100,6 +106,7 @@ export interface ScanResult {
   backlinks?: BacklinkData;
   keywords?: KeywordData;
   traffic?: TrafficData;
+  competitors?: CompetitorData[];
   status: 'scanning' | 'completed' | 'error';
   error?: string;
 }

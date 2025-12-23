@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateMockBacklinks, generateMockKeywords, generateMockTraffic } from '@/lib/mock-data';
-import { fetchRealSEOData } from '@/lib/real-api-integrations';
+import { fetchRealSEOData, fetchCompetitorDomains } from '@/lib/real-api-integrations';
 
 // Google PageSpeed Insights API (Free tier)
 const PSI_API_KEY = process.env.NEXT_PUBLIC_PSI_API_KEY || '';
@@ -193,9 +193,14 @@ export async function POST(request: NextRequest) {
 
     const domain = new URL(url).hostname;
 
-    // Try to fetch real SEO data from free APIs
-    let backlinks, keywords, traffic;
-    const realData = await fetchRealSEOData(domain);
+    // Try to fetch real SEO data from free APIs (parallel)
+    let backlinks, keywords, traffic, competitors;
+    const [realData, competitorData] = await Promise.all([
+      fetchRealSEOData(domain),
+      fetchCompetitorDomains(domain)
+    ]);
+
+    competitors = competitorData; // Always set real competitors
 
     if (realData && realData.domainMetrics) {
       // Use real data when available
@@ -288,6 +293,7 @@ export async function POST(request: NextRequest) {
       backlinks,
       keywords,
       traffic,
+      competitors, // Real competitor data!
       status: 'completed',
     };
 

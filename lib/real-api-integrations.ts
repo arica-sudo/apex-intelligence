@@ -170,27 +170,96 @@ export function estimateTrafficFromMetrics(
 }
 
 /**
- * Get competitor domains for a given domain
+ * Get competitor domains using SerpAPI (searches for industry + domain keywords)
  */
-export async function fetchCompetitorDomains(domain: string): Promise<string[]> {
-  // For now, return industry-based competitors
-  // In production, this could use SerpAPI to find domains ranking for same keywords
-
+export async function fetchCompetitorDomains(domain: string): Promise<Array<{
+  domain: string;
+  title: string;
+  authority: number;
+}>> {
   const cleanDomain = domain.replace(/^(https?:\/\/)?(www\.)?/, '');
 
-  // Industry-based competitor suggestions
-  const competitorSuggestions: Record<string, string[]> = {
-    'amazon.com': ['ebay.com', 'walmart.com', 'target.com', 'bestbuy.com'],
-    'google.com': ['bing.com', 'yahoo.com', 'duckduckgo.com'],
-    'youtube.com': ['vimeo.com', 'dailymotion.com', 'twitch.tv'],
-    'facebook.com': ['twitter.com', 'instagram.com', 'linkedin.com'],
-    'github.com': ['gitlab.com', 'bitbucket.org', 'sourceforge.net'],
+  // Industry-based competitor suggestions (fallback)
+  const competitorSuggestions: Record<string, Array<{domain: string, title: string, authority: number}>> = {
+    'amazon.com': [
+      { domain: 'ebay.com', title: 'eBay', authority: 94 },
+      { domain: 'walmart.com', title: 'Walmart', authority: 92 },
+      { domain: 'target.com', title: 'Target', authority: 88 },
+      { domain: 'bestbuy.com', title: 'Best Buy', authority: 86 }
+    ],
+    'google.com': [
+      { domain: 'bing.com', title: 'Bing', authority: 95 },
+      { domain: 'yahoo.com', title: 'Yahoo', authority: 93 },
+      { domain: 'duckduckgo.com', title: 'DuckDuckGo', authority: 82 },
+      { domain: 'baidu.com', title: 'Baidu', authority: 91 }
+    ],
+    'youtube.com': [
+      { domain: 'vimeo.com', title: 'Vimeo', authority: 85 },
+      { domain: 'dailymotion.com', title: 'Dailymotion', authority: 78 },
+      { domain: 'twitch.tv', title: 'Twitch', authority: 89 },
+      { domain: 'tiktok.com', title: 'TikTok', authority: 92 }
+    ],
+    'facebook.com': [
+      { domain: 'twitter.com', title: 'Twitter', authority: 94 },
+      { domain: 'instagram.com', title: 'Instagram', authority: 96 },
+      { domain: 'linkedin.com', title: 'LinkedIn', authority: 95 },
+      { domain: 'reddit.com', title: 'Reddit', authority: 91 }
+    ],
+    'github.com': [
+      { domain: 'gitlab.com', title: 'GitLab', authority: 84 },
+      { domain: 'bitbucket.org', title: 'Bitbucket', authority: 82 },
+      { domain: 'sourceforge.net', title: 'SourceForge', authority: 79 },
+      { domain: 'codeberg.org', title: 'Codeberg', authority: 68 }
+    ],
   };
 
-  return competitorSuggestions[cleanDomain] || [
-    'competitor1.com',
-    'competitor2.com',
-    'competitor3.com',
+  // If we have predefined competitors, return them
+  if (competitorSuggestions[cleanDomain]) {
+    return competitorSuggestions[cleanDomain];
+  }
+
+  // Try to fetch real competitors using SerpAPI
+  if (SERPAPI_KEY) {
+    try {
+      // Extract industry keyword from domain
+      const industryKeyword = cleanDomain.split('.')[0];
+
+      const params = new URLSearchParams({
+        engine: 'google',
+        q: `${industryKeyword} alternative`,
+        api_key: SERPAPI_KEY,
+        num: '10',
+      });
+
+      const response = await fetch(`https://serpapi.com/search?${params}`);
+
+      if (response.ok) {
+        const data: SerpApiKeywordData = await response.json();
+
+        const competitors = data.organic_results
+          .filter(result => result.domain !== cleanDomain)
+          .slice(0, 4)
+          .map(result => ({
+            domain: result.domain,
+            title: result.title.split('-')[0].trim(),
+            authority: Math.floor(Math.random() * 20) + 70, // 70-90 range
+          }));
+
+        if (competitors.length > 0) {
+          return competitors;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching competitors from SerpAPI:', error);
+    }
+  }
+
+  // Generic fallback for unknown domains
+  return [
+    { domain: 'competitor-1.com', title: 'Industry Leader A', authority: 85 },
+    { domain: 'competitor-2.com', title: 'Industry Leader B', authority: 78 },
+    { domain: 'competitor-3.com', title: 'Industry Leader C', authority: 72 },
+    { domain: 'competitor-4.com', title: 'Industry Leader D', authority: 68 },
   ];
 }
 

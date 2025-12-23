@@ -140,7 +140,10 @@ export default function Home() {
             <div className="mt-6 space-y-6">
               {/* 3D Competitive Universe */}
               {scanResult.backlinks && (
-                <CompetitiveUniverse yourDomain={scanResult.domain} />
+                <CompetitiveUniverse
+                  yourDomain={scanResult.domain}
+                  competitors={scanResult.competitors}
+                />
               )}
 
               {/* Traffic Analysis */}
