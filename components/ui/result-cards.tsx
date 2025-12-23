@@ -11,6 +11,11 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Globe2,
+  Eye,
+  Cpu,
+  Cloud,
+  Radar,
 } from 'lucide-react';
 import { ScanResult } from '@/lib/types';
 
@@ -41,7 +46,8 @@ function ScoreGauge({ score, label }: { score: number; label: string }) {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center relative group">
+      <div className="absolute inset-0 blur-2xl opacity-0 group-hover:opacity-80 transition-opacity duration-300 pointer-events-none bg-gradient-to-r from-apex-primary/25 via-apex-secondary/25 to-apex-accent/25 rounded-full" />
       <div className="relative w-32 h-32 mb-3">
         <svg className="transform -rotate-90 w-32 h-32">
           <circle
@@ -131,36 +137,20 @@ export default function ResultCards({ result }: ResultCardsProps) {
         </div>
 
         <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="text-center">
-            <p className="text-white/50 text-xs mb-1">FCP</p>
-            <p className="text-lg font-semibold text-apex-cyan">
-              {formatTime(result.performance.fcp)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-white/50 text-xs mb-1">LCP</p>
-            <p className="text-lg font-semibold text-apex-cyan">
-              {formatTime(result.performance.lcp)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-white/50 text-xs mb-1">CLS</p>
-            <p className="text-lg font-semibold text-apex-cyan">
-              {result.performance.cls.toFixed(3)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-white/50 text-xs mb-1">TBT</p>
-            <p className="text-lg font-semibold text-apex-cyan">
-              {formatTime(result.performance.tbt)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-white/50 text-xs mb-1">SI</p>
-            <p className="text-lg font-semibold text-apex-cyan">
-              {formatTime(result.performance.si)}
-            </p>
-          </div>
+          {[
+            { label: 'FCP', value: formatTime(result.performance.fcp) },
+            { label: 'LCP', value: formatTime(result.performance.lcp) },
+            { label: 'CLS', value: result.performance.cls.toFixed(3) },
+            { label: 'TBT', value: formatTime(result.performance.tbt) },
+            { label: 'SI', value: formatTime(result.performance.si) },
+          ].map((metric) => (
+            <div key={metric.label} className="text-center glass-panel-hover py-3">
+              <p className="text-white/50 text-xs mb-1">{metric.label}</p>
+              <p className="text-lg font-semibold text-apex-cyan">
+                {metric.value}
+              </p>
+            </div>
+          ))}
         </div>
       </motion.div>
 
@@ -208,42 +198,52 @@ export default function ResultCards({ result }: ResultCardsProps) {
                 <Zap className="w-5 h-5 text-yellow-400" />
                 <p className="text-white/60 text-sm">CDN</p>
               </div>
-              <p className="text-lg font-semibold">{result.techStack.cdn}</p>
+              <p className="text-lg font-semibold">
+                {Array.isArray(result.techStack.cdn) ? result.techStack.cdn.join(', ') : result.techStack.cdn}
+              </p>
+            </div>
+          )}
+
+          {result.techStack.hosting && result.techStack.hosting.length > 0 && (
+            <div className="glass-panel-hover p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Cloud className="w-5 h-5 text-apex-cyan" />
+                <p className="text-white/60 text-sm">Hosting / Edge</p>
+              </div>
+              <p className="text-lg font-semibold">{result.techStack.hosting.join(', ')}</p>
             </div>
           )}
         </div>
 
-        {result.techStack.analytics && result.techStack.analytics.length > 0 && (
-          <div className="mt-6">
-            <p className="text-white/60 text-sm mb-3">Analytics & Tracking</p>
-            <div className="flex flex-wrap gap-2">
-              {result.techStack.analytics.map((tool, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-apex-violet/20 border border-apex-violet/30 rounded-full text-sm"
-                >
-                  {tool}
-                </span>
-              ))}
+        {[
+          { title: 'Analytics & Tracking', items: result.techStack.analytics },
+          { title: 'Marketing / Ads', items: result.techStack.marketing },
+          { title: 'Payments', items: result.techStack.payments },
+          { title: 'Chat / Support', items: result.techStack.chat },
+          { title: 'A/B Testing', items: result.techStack.abTesting },
+          { title: 'Monitoring / APM', items: result.techStack.monitoring },
+          { title: 'Security / WAF', items: result.techStack.security },
+          { title: 'Fonts', items: result.techStack.fonts },
+          { title: 'Databases', items: result.techStack.databases },
+          { title: 'Edge', items: result.techStack.edge },
+          { title: 'Libraries', items: result.techStack.libraries },
+        ]
+          .filter(section => section.items && section.items.length)
+          .map(section => (
+            <div key={section.title} className="mt-4">
+              <p className="text-white/60 text-sm mb-3">{section.title}</p>
+              <div className="flex flex-wrap gap-2">
+                {section.items!.map((itemLabel, i) => (
+                  <span
+                    key={`${section.title}-${i}`}
+                    className="px-3 py-1 bg-apex-cyan/15 border border-apex-cyan/20 rounded-full text-sm"
+                  >
+                    {itemLabel}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-
-        {result.techStack.libraries && result.techStack.libraries.length > 0 && (
-          <div className="mt-4">
-            <p className="text-white/60 text-sm mb-3">Libraries</p>
-            <div className="flex flex-wrap gap-2">
-              {result.techStack.libraries.map((lib, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-apex-cyan/20 border border-apex-cyan/30 rounded-full text-sm"
-                >
-                  {lib}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+          ))}
       </motion.div>
 
       {/* SEO Health Details */}
@@ -288,11 +288,14 @@ export default function ResultCards({ result }: ResultCardsProps) {
 
           <div className="flex items-center justify-between p-4 glass-panel-hover">
             <span className="text-white/80">H1 Tag</span>
-            {result.seoHealth.hasH1 ? (
-              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
-            ) : (
-              <XCircle className="w-5 h-5 text-apex-crimson" />
-            )}
+            <div className="flex items-center gap-2">
+              {result.seoHealth.hasH1 ? (
+                <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+              ) : (
+                <XCircle className="w-5 h-5 text-apex-crimson" />
+              )}
+              <span className="text-sm text-white/60">({result.seoHealth.h1Count} found)</span>
+            </div>
           </div>
 
           <div className="flex items-center justify-between p-4 glass-panel-hover">
@@ -319,6 +322,51 @@ export default function ResultCards({ result }: ResultCardsProps) {
               <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
             ) : (
               <XCircle className="w-5 h-5 text-apex-crimson" />
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 glass-panel-hover">
+            <span className="text-white/80">Canonical</span>
+            {result.seoHealth.hasCanonical ? (
+              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+            ) : (
+              <XCircle className="w-5 h-5 text-apex-crimson" />
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 glass-panel-hover">
+            <span className="text-white/80">Meta Robots</span>
+            {result.seoHealth.hasMetaRobots ? (
+              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+            ) : (
+              <XCircle className="w-5 h-5 text-apex-crimson" />
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 glass-panel-hover">
+            <span className="text-white/80">Indexable</span>
+            {!result.seoHealth.isNoindex ? (
+              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+            ) : (
+              <XCircle className="w-5 h-5 text-apex-crimson" />
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 glass-panel-hover">
+            <span className="text-white/80">Open Graph / Social</span>
+            {result.seoHealth.hasOpenGraph || result.seoHealth.hasTwitterCard ? (
+              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+            ) : (
+              <XCircle className="w-5 h-5 text-apex-crimson" />
+            )}
+          </div>
+
+          <div className="flex items-center justify-between p-4 glass-panel-hover">
+            <span className="text-white/80">Image Alts</span>
+            {result.seoHealth.imageAltsPresent ? (
+              <CheckCircle2 className="w-5 h-5 text-apex-emerald" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-apex-crimson" />
             )}
           </div>
         </div>

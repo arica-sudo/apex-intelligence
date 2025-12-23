@@ -19,7 +19,14 @@
       "Bash(python:*)",
       "Bash(npm uninstall:*)",
       "Bash(taskkill:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(git pull:*)",
+      "Bash(del nul)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(if exist \".next\" rd /s /q .next)",
+      "Bash(if exist \"node_modules/.cache\" rd /s /q node_modules.cache)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

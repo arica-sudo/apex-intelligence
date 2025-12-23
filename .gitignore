@@ -48,3 +48,5 @@ next-env.d.ts
 *.swo
 *~
 nul
+
+/lib/generated/prisma

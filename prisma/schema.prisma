@@ -1,0 +1,75 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  scans         Scan[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Scan {
+  id          String   @id @default(cuid())
+  url         String
+  domain      String
+  timestamp   DateTime @default(now())
+  
+  // Storing complex objects as JSON strings (SQLite doesn't support Json type natively in Prisma the same way Postgres does within Next.js contexts sometimes, but Prisma supports String for JSON blobs easily)
+  techStack   String // JSON
+  performance String // JSON
+  seoHealth   String // JSON
+  backlinks   String? // JSON
+  keywords    String? // JSON
+  traffic     String? // JSON
+  competitors String? // JSON
+  aiAnalysis  String? // JSON
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+}

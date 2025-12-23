@@ -50,9 +50,22 @@ export default function TrafficAnalysis({ data }: TrafficAnalysisProps) {
       animate="show"
       className="glass-panel p-8"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <BarChart3 className="w-6 h-6 text-apex-emerald" />
-        <h3 className="text-2xl font-semibold">Traffic Intelligence</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <BarChart3 className="w-6 h-6 text-apex-emerald" />
+          <h3 className="text-2xl font-semibold">Traffic Intelligence</h3>
+        </div>
+        {data.dataSource && (
+          <span className={`text-xs px-3 py-1 rounded-full ${
+            data.dataSource === 'real' 
+              ? 'bg-apex-emerald/20 text-apex-emerald border border-apex-emerald/30'
+              : data.dataSource === 'hybrid'
+              ? 'bg-apex-cyan/20 text-apex-cyan border border-apex-cyan/30'
+              : 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/30'
+          }`}>
+            {data.dataSource === 'real' ? '✓ Real Data' : data.dataSource === 'hybrid' ? '⚡ Hybrid' : '📊 Estimated'}
+          </span>
+        )}
       </div>
 
       {/* Key Metrics */}

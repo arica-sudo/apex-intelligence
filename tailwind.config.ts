@@ -12,19 +12,16 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
 
-        // Dark Mode Colors - Modern Enterprise
-        'apex-dark': '#0B0E14', // Deep Charcoal
-        'apex-darker': '#060812',
+        // Luxe palette
+        'apex-dark': '#070910',    // Obsidian
+        'apex-darker': '#04060c',
+        'apex-light': '#0b0d13',
+        'apex-lighter': '#0f1420',
 
-        // Light Mode Colors - Modern Enterprise
-        'apex-light': '#F8FAFC', // Soft Slate
-        'apex-lighter': '#FFFFFF',
-
-        // Accent Colors (Theme-aware)
-        'apex-primary': '#6366F1', // Electric Indigo (Dark)
-        'apex-primary-light': '#2563EB', // Cobalt Blue (Light)
-        'apex-secondary': '#8B5CF6', // Purple
-        'apex-accent': '#3B82F6', // Blue
+        'apex-primary': '#4fb7c7',      // Muted cyan
+        'apex-primary-light': '#5ac8d8',
+        'apex-secondary': '#7c7cf2',    // Soft indigo
+        'apex-accent': '#1f9cb5',       // Deep teal
 
         // Status Colors
         'apex-success': '#10B981', // Emerald

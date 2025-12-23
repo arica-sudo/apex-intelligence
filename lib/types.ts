@@ -2,9 +2,20 @@ export interface TechStack {
   cms?: string;
   framework?: string;
   server?: string;
-  cdn?: string;
+  hosting?: string[];
+  cdn?: string | string[];
   analytics?: string[];
   libraries?: string[];
+  marketing?: string[];
+  payments?: string[];
+  chat?: string[];
+  abTesting?: string[];
+  monitoring?: string[];
+  security?: string[];
+  fonts?: string[];
+  databases?: string[];
+  edge?: string[];
+  misc?: string[];
 }
 
 export interface PerformanceMetrics {
@@ -23,6 +34,13 @@ export interface SEOHealth {
   titleLength: number;
   metaDescriptionLength: number;
   hasH1: boolean;
+  h1Count: number;
+  hasCanonical: boolean;
+  hasMetaRobots: boolean;
+  isNoindex: boolean;
+  hasOpenGraph: boolean;
+  hasTwitterCard: boolean;
+  imageAltsPresent: boolean;
   hasSsl: boolean;
   hasRobotsTxt: boolean;
   hasSitemap: boolean;
@@ -47,6 +65,7 @@ export interface BacklinkData {
     dr51to70: number;
     dr71to100: number;
   };
+  dataSource?: 'real' | 'estimated' | 'hybrid';
 }
 
 export interface KeywordData {
@@ -65,6 +84,7 @@ export interface KeywordData {
     top50: number;
     top100: number;
   };
+  dataSource?: 'real' | 'estimated' | 'hybrid';
 }
 
 export interface TrafficData {
@@ -75,6 +95,7 @@ export interface TrafficData {
     referral: number;
     social: number;
     paid: number;
+    email?: number;
   };
   trafficHistory: Array<{
     month: string;
@@ -87,6 +108,7 @@ export interface TrafficData {
     country: string;
     percentage: number;
   }>;
+  dataSource?: 'real' | 'estimated' | 'hybrid';
 }
 
 export interface CompetitorData {
@@ -96,6 +118,8 @@ export interface CompetitorData {
 }
 
 export interface ScanResult {
+  id?: string;
+  aiAnalysis?: any;
   url: string;
   domain: string;
   timestamp: number;

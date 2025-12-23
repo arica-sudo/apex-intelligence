@@ -33,9 +33,10 @@ interface CompetitorSphereProps {
   size: number;
   color: string;
   label: string;
+  onSelect?: () => void;
 }
 
-function CompetitorSphere({ position, size, color, label }: CompetitorSphereProps) {
+function CompetitorSphere({ position, size, color, label, onSelect }: CompetitorSphereProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
@@ -54,6 +55,7 @@ function CompetitorSphere({ position, size, color, label }: CompetitorSphereProp
         args={[size, 32, 32]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
+        onClick={onSelect}
       >
         <meshStandardMaterial
           color={color}
@@ -91,7 +93,15 @@ function ConnectionLine({ start, end, color }: {
   );
 }
 
-function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: APICompetitorData[] }) {
+function Scene({
+  yourDomain,
+  competitors,
+  onSelect,
+}: {
+  yourDomain: string;
+  competitors?: APICompetitorData[];
+  onSelect?: (comp: APICompetitorData) => void;
+}) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -107,12 +117,7 @@ function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: 
     marketShare: 100 - comp.authority, // Higher authority = closer to center
     gap: (100 - comp.authority) * 0.5, // Authority distance from center
     color: colors[index % colors.length],
-  })) : [
-    { name: 'Industry Leader A', marketShare: 35, gap: 45, color: '#EF4444' },
-    { name: 'Industry Leader B', marketShare: 25, gap: 30, color: '#F59E0B' },
-    { name: 'Industry Leader C', marketShare: 20, gap: 20, color: '#10B981' },
-    { name: 'Industry Leader D', marketShare: 15, gap: 10, color: '#3B82F6' },
-  ];
+  })) : [];
 
   const centerPosition: [number, number, number] = [0, 0, 0];
 
@@ -132,7 +137,7 @@ function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: 
 
       {/* Competitor spheres orbiting */}
       {competitorData.map((comp, index) => {
-        const angle = (index / competitorData.length) * Math.PI * 2;
+        const angle = (index / Math.max(1, competitorData.length)) * Math.PI * 2;
         const distance = 4 + comp.gap * 0.1;
         const x = Math.cos(angle) * distance;
         const z = Math.sin(angle) * distance;
@@ -146,6 +151,10 @@ function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: 
               size={0.8 + comp.marketShare * 0.02}
               color={comp.color}
               label={comp.name}
+              onSelect={() => {
+                const match = competitors?.find(c => (c.title || c.domain) === comp.name);
+                if (match && onSelect) onSelect(match);
+              }}
             />
             <ConnectionLine
               start={centerPosition}
@@ -168,6 +177,9 @@ function Scene({ yourDomain, competitors }: { yourDomain: string; competitors?: 
 }
 
 export default function CompetitiveUniverse({ yourDomain, competitors }: CompetitiveUniverseProps) {
+  const [selected, setSelected] = useState<APICompetitorData | null>(null);
+  const hasCompetitors = competitors && competitors.length > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -180,7 +192,7 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
           Competitive Universe
         </h2>
         <p className="text-white/60 text-sm">
-          Interactive 3D visualization of your market position. Drag to rotate, scroll to zoom.
+          Interactive 3D visualization of your market position. Drag to rotate, scroll to zoom. Click a competitor to inspect.
         </p>
       </div>
 
@@ -191,9 +203,14 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
           dpr={[1, 2]}
         >
           <Suspense fallback={<LoadingFallback />}>
-            <Scene yourDomain={yourDomain} competitors={competitors} />
+            <Scene yourDomain={yourDomain} competitors={competitors} onSelect={setSelected} />
           </Suspense>
         </Canvas>
+        {!hasCompetitors && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm text-white/70 text-sm">
+            No live competitors found. Run with a different query or add a paid data source for richer competitor intel.
+          </div>
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-6 text-sm">
@@ -207,14 +224,28 @@ export default function CompetitiveUniverse({ yourDomain, competitors }: Competi
         </div>
       </div>
 
-      {competitors && competitors.length > 0 && (
+      {selected && (
+        <div className="mt-4 glass-panel-hover p-4 flex flex-col gap-1">
+          <div className="flex items-center justify-between">
+            <p className="font-semibold text-white text-sm">{selected.title || selected.domain}</p>
+            <span className="text-xs text-apex-accent">Authority {selected.authority}</span>
+          </div>
+          <p className="text-xs text-white/60">{selected.domain}</p>
+        </div>
+      )}
+
+      {hasCompetitors && (
         <div className="mt-6 grid grid-cols-2 gap-3">
           {competitors.map((comp) => (
-            <div key={comp.domain} className="glass-panel-hover p-3">
+            <button
+              key={comp.domain}
+              onClick={() => setSelected(comp)}
+              className="glass-panel-hover p-3 text-left w-full"
+            >
               <p className="font-semibold text-white text-sm">{comp.title || comp.domain}</p>
               <p className="text-xs text-white/50">{comp.domain}</p>
               <p className="text-xs text-apex-accent mt-1">Authority: {comp.authority}</p>
-            </div>
+            </button>
           ))}
         </div>
       )}

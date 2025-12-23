@@ -43,9 +43,22 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
       animate="show"
       className="glass-panel p-8"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <Search className="w-6 h-6 text-apex-cyan" />
-        <h3 className="text-2xl font-semibold">Keyword Rankings</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Search className="w-6 h-6 text-apex-cyan" />
+          <h3 className="text-2xl font-semibold">Keyword Rankings</h3>
+        </div>
+        {data.dataSource && (
+          <span className={`text-xs px-3 py-1 rounded-full ${
+            data.dataSource === 'real' 
+              ? 'bg-apex-emerald/20 text-apex-emerald border border-apex-emerald/30'
+              : data.dataSource === 'hybrid'
+              ? 'bg-apex-cyan/20 text-apex-cyan border border-apex-cyan/30'
+              : 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/30'
+          }`}>
+            {data.dataSource === 'real' ? '✓ Real Data' : data.dataSource === 'hybrid' ? '⚡ Hybrid' : '📊 Estimated'}
+          </span>
+        )}
       </div>
 
       {/* Summary Stats */}
@@ -94,7 +107,7 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
             transition={{ delay: 0.5 }}
             className="text-3xl font-bold text-apex-violet"
           >
-            {data.topKeywords.reduce((sum, k) => sum + k.traffic, 0).toLocaleString()}
+            {(data.topKeywords ?? []).reduce((sum, k) => sum + (k.traffic || 0), 0).toLocaleString()}
           </motion.p>
         </div>
       </div>
@@ -141,7 +154,7 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
           Top Performing Keywords
         </h4>
         <div className="space-y-3">
-          {data.topKeywords.map((keyword, index) => (
+          {(data.topKeywords ?? []).map((keyword, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -20 }}
@@ -177,7 +190,7 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
                 <div className="md:col-span-2 text-center">
                   <p className="text-xs text-white/50 mb-1">Volume</p>
                   <p className="text-sm font-semibold text-white">
-                    {keyword.searchVolume.toLocaleString()}
+                    {(keyword.searchVolume ?? 0).toLocaleString()}
                   </p>
                 </div>
 
@@ -195,7 +208,7 @@ export default function KeywordAnalysis({ data }: KeywordAnalysisProps) {
                   <div className="flex items-center justify-center gap-1">
                     <TrendingUp className="w-4 h-4 text-apex-emerald" />
                     <span className="text-sm font-semibold text-apex-emerald">
-                      {keyword.traffic.toLocaleString()}
+                      {(keyword.traffic ?? 0).toLocaleString()}
                     </span>
                   </div>
                 </div>

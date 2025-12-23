@@ -13,6 +13,7 @@ import HapticButton from '@/components/ui/haptic-button';
 import { SkeletonDashboard } from '@/components/ui/skeleton';
 import { ScanResult } from '@/lib/types';
 import { motion } from 'framer-motion';
+import AiInsight from '@/components/ui/ai-insight';
 
 // Dynamically import heavy 3D components
 const ParticleBackground = dynamic(() => import('@/components/ui/particle-background'), { ssr: false });
@@ -38,8 +39,13 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Scan failed');
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Scan failed');
+        }
+        const text = await response.text();
+        throw new Error(text.slice(0, 200) || 'Scan failed');
       }
 
       const result = await response.json();
@@ -162,6 +168,11 @@ export default function Home() {
               {/* Keyword Rankings */}
               {scanResult.keywords && (
                 <KeywordAnalysis data={scanResult.keywords} />
+              )}
+
+              {/* AI Analysis (Phase 4) */}
+              {scanResult.id && (
+                <AiInsight scanId={scanResult.id} initialData={scanResult.aiAnalysis} />
               )}
             </div>
           </>
